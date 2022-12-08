@@ -33,7 +33,7 @@
     .bounding-box {
         display: flex;
         position: absolute;
-        box-shadow: 0 0 0 3px #149df2 inset;
+        box-shadow: 0 0 0 3px #149d2a ;
         flex-wrap: wrap;
         justify-content: center;
         cursor: pointer;
