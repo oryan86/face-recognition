@@ -1,17 +1,53 @@
-import React from 'react'
+import React, {useState} from 'react'
 import logo from '../Logo/brain.png'
 import { LockClosedIcon } from '@heroicons/react/20/solid'
 
-const Register = ({onRouteChange}) => {
+const Register = ({onRouteChange, loadUser}) => {
+
+  // STATE
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const onNameChange = (event) => {
+    setName(event.target.value);
+  }
+
+  const onEmailChange = (event) => {
+      setEmail(event.target.value);
+  }
+
+  const onPasswordChange = (event) => {
+    setPassword(event.target.value);
+  }
+
+  const onSubmitRegister = () => {
+    fetch('http://localhost:3000/register', {
+      method: 'post',
+      headers: {'content-type' : 'application/json'},
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        password: password
+      })
+    })
+    .then(response => response.json())
+    .then(user => {
+      if(user) {
+        loadUser(user)
+        console.log(user)
+        onRouteChange('home')
+      }
+    })
+  }
+
   return (
     <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md space-y-8">
           <div>
-            <img
-              className="mx-auto h-12 w-auto"
-              src={logo}
-              alt="Your Company"
-            />
+            <div className='ml-auto mr-auto border shadow-xl w-[65px] p-2 rounded-md bg-gradient-to-r from-[#ff5edf] to-[#04c8De]'>
+                <img className="mx-auto h-12 w-auto" src={logo} alt="Your Company" />
+            </div>
             <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
               Register a account
             </h2>
@@ -25,6 +61,7 @@ const Register = ({onRouteChange}) => {
                   Name
                 </label>
                 <input
+                  onChange={onNameChange}
                   id="name"
                   name="name"
                   type="text"
@@ -39,6 +76,7 @@ const Register = ({onRouteChange}) => {
                   Email address
                 </label>
                 <input
+                  onChange={onEmailChange}
                   id="email-address"
                   name="email"
                   type="email"
@@ -53,6 +91,7 @@ const Register = ({onRouteChange}) => {
                   Password
                 </label>
                 <input
+                  onChange={onPasswordChange}
                   id="password"
                   name="password"
                   type="password"
@@ -66,7 +105,7 @@ const Register = ({onRouteChange}) => {
 
             <div>
               <button
-                onClick={() => onRouteChange('home')}
+                onClick={onSubmitRegister}
                 type="submit"
                 className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
@@ -76,6 +115,13 @@ const Register = ({onRouteChange}) => {
                 Register
               </button>
             </div>
+
+            <div className="flex justify-center cursor-pointer text-sm ">
+              <div>
+               <p onClick={() => onRouteChange('signin')} className="font-medium text-black hover:text-indigo-500">Sign In</p>
+              </div>  
+            </div>
+
           </form>
         </div>
       </div>

@@ -27,10 +27,29 @@ class App extends Component {
       box: {},
       route: 'signin',
       isSignedIn: false,
+      user: {
+        id: '',
+        name: '',
+        email: '',
+        password: '',
+        entries: 0,
+        joined: ''
+      }
     }
   }
 
   /* LOGIC */
+
+  loadUser = (data) => {
+    this.setState({user: {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        entries: data.entries,
+        joined: data.joined
+    }})
+  }
 
   // calculation of the box postion 
   calculateFaceLoaction = (data) => {
@@ -107,17 +126,17 @@ class App extends Component {
         <div>
           <ParticlesBg type="cobweb" num={150} bg={true} />
           <Navigation isSignedIn={this.state.isSignedIn} onRouteChange={this.onRouteChange}/>
-          { this.state.route === 'home' ?
-          <div>
-          <Logo />
-          <Rank />
-          <ImageLinkForm onInputChange={this.onInputChange} onButtonClick={this.onButtonClick}/>
-          <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/> 
-          </div>
+          { this.state.route === 'home' 
+          ? <div>
+              <Logo />
+              <Rank />
+              <ImageLinkForm onInputChange={this.onInputChange} onButtonClick={this.onButtonClick}/>
+              <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/> 
+            </div>
           : (
             this.state.route === 'signin' 
             ? <Signin  onRouteChange={this.onRouteChange}/> 
-            : <Register onRouteChange={this.onRouteChange}/>
+            : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
           )
           
             }

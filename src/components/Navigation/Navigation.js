@@ -7,11 +7,13 @@ const Navigation = ({onRouteChange, isSignedIn}) => {
         <p onClick={() => onRouteChange('signout')} className=' font-bold cursor-pointer text-2xl underline text-black hover:text-gray-500 '>Sign out</p>
       </nav> 
       )
-    } else {
+    } 
+    else {
       return (
         <nav className='flex justify-end p-5 '>
-          <p onClick={() => onRouteChange('signin')} className=' font-bold cursor-pointer text-2xl underline text-black hover:text-gray-500 '>Sign In/</p>
-          <p onClick={() => onRouteChange('register')} className=' font-bold cursor-pointer text-2xl underline text-black hover:text-gray-500 '>Register</p>
+          <p onClick={() => onRouteChange('signin')} className=' font-bold cursor-pointer text-2xl underline text-black hover:text-gray-500 '>Sign In/ </p>
+          
+          <p onClick={() => onRouteChange('register')} className=' font-bold cursor-pointer text-2xl underline text-black hover:text-gray-500 '> Register</p>
         </nav>
       )
     }
