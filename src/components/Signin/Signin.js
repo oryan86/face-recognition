@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import logo from '../Logo/brain.png'
 
 
-const Signin = ({onRouteChange}) => {
+const Signin = ({onRouteChange, loadUser}) => {
 
   // State
   const [signInEmail, setSignInEmail] = useState('');
@@ -27,7 +27,8 @@ const Signin = ({onRouteChange}) => {
     })
     .then(response => response.json())
     .then(data => {
-      if (data === 'Success') {
+      if (data.id) {
+        loadUser(data)
         onRouteChange('home');
       }
     })

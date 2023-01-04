@@ -7,6 +7,7 @@ import Rank from './components/Rank/Rank';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecgnition/FaceRecognition';
 import ParticlesBg from 'particles-bg';
+import { data } from 'autoprefixer';
 
 
 const USER_ID = 'no_cap';
@@ -31,7 +32,6 @@ class App extends Component {
         id: '',
         name: '',
         email: '',
-        password: '',
         entries: 0,
         joined: ''
       }
@@ -45,7 +45,6 @@ class App extends Component {
         id: data.id,
         name: data.name,
         email: data.email,
-        password: data.password,
         entries: data.entries,
         joined: data.joined
     }})
@@ -108,7 +107,22 @@ class App extends Component {
 
     fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs", requestOptions)
         .then(response => response.json())
-        .then(result => this.displayFaceBox(this.calculateFaceLoaction(result)))
+        .then(result => {
+          if(data) {
+            fetch('http://localhost:3000/image', {
+              method: 'put',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({
+                id: this.state.user.id
+              })
+            })
+            .then(response => response.json())
+            .then((count) => {
+              this.setState(Object.assign(this.state.user, {entries: count}))
+            })
+          }
+          this.displayFaceBox(this.calculateFaceLoaction(result))
+        })
         .catch(error => console.log('error', error));
     }
 
@@ -129,13 +143,13 @@ class App extends Component {
           { this.state.route === 'home' 
           ? <div>
               <Logo />
-              <Rank />
+              <Rank name={this.state.user.name} entries={this.state.user.entries}/>
               <ImageLinkForm onInputChange={this.onInputChange} onButtonClick={this.onButtonClick}/>
               <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/> 
             </div>
           : (
             this.state.route === 'signin' 
-            ? <Signin  onRouteChange={this.onRouteChange}/> 
+            ? <Signin  loadUser={this.loadUser} onRouteChange={this.onRouteChange}/> 
             : <Register loadUser={this.loadUser} onRouteChange={this.onRouteChange}/>
           )
           
