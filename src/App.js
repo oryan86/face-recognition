@@ -8,34 +8,29 @@ import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecgnition/FaceRecognition';
 import ParticlesBg from 'particles-bg';
 import { data } from 'autoprefixer';
+ 
 
-
-const USER_ID = 'no_cap';
-// Your PAT (Personal Access Token) can be found in the portal under Authentification
-const PAT = '88af9cf3c0434bdfa1a283e888ccf665';
-const APP_ID = 'Face_detection';
-// Change these to whatever model and image URL you want to use
-const MODEL_ID = 'face-detection';   
+const initialState = {
+  input: '',
+  imageUrl: '',
+  box: {},
+  route: 'signin',
+  isSignedIn: false,
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: ''
+  }
+}
 
 /* APP COMPONENt */
 
 class App extends Component {
   constructor() {
     super()
-    this.state = {
-      input: '',
-      imageUrl: '',
-      box: {},
-      route: 'signin',
-      isSignedIn: false,
-      user: {
-        id: '',
-        name: '',
-        email: '',
-        entries: 0,
-        joined: ''
-      }
-    }
+    this.state = initialState;
   }
 
   /* LOGIC */
@@ -79,56 +74,39 @@ class App extends Component {
   // on click we grab the input URL and display an image also detect faces
   onButtonClick = () => {
     this.setState({imageUrl: this.state.input})
-    const IMAGE_URL = this.state.input;
-      const raw = JSON.stringify({
-        "user_app_id": {
-            "user_id": USER_ID,
-            "app_id": APP_ID
-        },
-        "inputs": [
-            {
-                "data": {
-                    "image": {
-                        "url": IMAGE_URL
-                    }
-                }
-            }
-        ]
-    });
-
-    const requestOptions = {
-        method: 'POST',
-        headers: {
-            'Accept': 'application/json',
-            'Authorization': 'Key ' + PAT
-        },
-        body: raw
-    };
-
-    fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/outputs", requestOptions)
-        .then(response => response.json())
-        .then(result => {
-          if(data) {
-            fetch('http://localhost:3000/image', {
-              method: 'put',
+    fetch('http://localhost:3000/imageUrl', {
+              method: 'post',
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify({
-                id: this.state.user.id
+                input: this.state.input
               })
             })
             .then(response => response.json())
-            .then((count) => {
-              this.setState(Object.assign(this.state.user, {entries: count}))
+            .then(result => {
+              console.log(result)
+              if(data) {
+                fetch('http://localhost:3000/image', {
+                  method: 'put',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify({
+                    id: this.state.user.id
+                  })
+                })
+                .then(response => response.json())
+                .then((count) => {
+                  this.setState(Object.assign(this.state.user, {entries: count}))
+                })
+                .catch(err => {console.log(err)})
+              }
+              this.displayFaceBox(this.calculateFaceLoaction(result))
             })
-          }
-          this.displayFaceBox(this.calculateFaceLoaction(result))
-        })
-        .catch(error => console.log('error', error));
+            .catch(err => {console.log('Error', err)})
+    
     }
 
     onRouteChange = (route) => {
       if (route === 'signout') {
-        this.setState({isSignedIn: false})
+        this.setState(initialState)
       } else if (route === 'home') {
         this.setState({isSignedIn: true})
       }

@@ -33,7 +33,7 @@ const Register = ({onRouteChange, loadUser}) => {
     })
     .then(response => response.json())
     .then(user => {
-      if(user) {
+      if(user.id) {
         loadUser(user)
         console.log(user)
         onRouteChange('home')
