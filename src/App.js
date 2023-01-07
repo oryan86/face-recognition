@@ -7,9 +7,8 @@ import Rank from './components/Rank/Rank';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import FaceRecognition from './components/FaceRecgnition/FaceRecognition';
 import ParticlesBg from 'particles-bg';
-import { data } from 'autoprefixer';
  
-
+// reset to initial State
 const initialState = {
   input: '',
   imageUrl: '',
@@ -34,6 +33,15 @@ class App extends Component {
   }
 
   /* LOGIC */
+
+  onRouteChange = (route) => {
+    if (route === 'signout') {
+      this.setState(initialState)
+    } else if (route === 'home') {
+      this.setState({isSignedIn: true})
+    }
+    this.setState({route: route});
+  }
 
   loadUser = (data) => {
     this.setState({user: {
@@ -83,8 +91,7 @@ class App extends Component {
             })
             .then(response => response.json())
             .then(result => {
-              console.log(result)
-              if(data) {
+              if(result) {
                 fetch('http://localhost:3000/image', {
                   method: 'put',
                   headers: {'Content-Type': 'application/json'},
@@ -100,19 +107,11 @@ class App extends Component {
               }
               this.displayFaceBox(this.calculateFaceLoaction(result))
             })
-            .catch(err => {console.log('Error', err)})
+            .catch(err => {console.log(`Can't detect face.. ${err}`)})
     
     }
 
-    onRouteChange = (route) => {
-      if (route === 'signout') {
-        this.setState(initialState)
-      } else if (route === 'home') {
-        this.setState({isSignedIn: true})
-      }
-      this.setState({route: route});
-    }
-
+    /* CONPONENTS */
     render() {
       return (
         <div>
