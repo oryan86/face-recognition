@@ -82,7 +82,7 @@ class App extends Component {
   // on click we grab the input URL and display an image also detect faces
   onButtonClick = () => {
     this.setState({imageUrl: this.state.input})
-    fetch('http://localhost:3000/imageUrl', {
+    fetch('https://immense-lake-48358.herokuapp.com/imageUrl', {
               method: 'post',
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify({
@@ -92,7 +92,7 @@ class App extends Component {
             .then(response => response.json())
             .then(result => {
               if(result) {
-                fetch('http://localhost:3000/image', {
+                fetch('https://immense-lake-48358.herokuapp.com/image', {
                   method: 'put',
                   headers: {'Content-Type': 'application/json'},
                   body: JSON.stringify({
